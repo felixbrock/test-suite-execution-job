@@ -1,5 +1,5 @@
 {
-  "name": "signup-trigger",
+  "name": "test-suite-execution-job",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cito-data/signup-trigger.git"
+    "url": "git+https://github.com/cito-data/test-suite-execution-job.git"
   },
   "author": "",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/cito-data/signup-trigger/issues"
+    "url": "https://github.com/cito-data/test-suite-execution-job/issues"
   },
-  "homepage": "https://github.com/cito-data/signup-trigger#readme",
+  "homepage": "https://github.com/cito-data/test-suite-execution-job#readme",
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
     "@types/jest": "^27.4.1",
