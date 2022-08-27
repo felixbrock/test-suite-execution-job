@@ -1,0 +1,50 @@
+{
+  "name": "signup-trigger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
+    "tsc": "tsc",
+    "clean": "rimraf dist",
+    "build": "npm run clean && npm run tsc && npm run lint",
+    "start": "npm run build && nodemon ./src/index.ts",
+    "deploy": "npm run build && serverless deploy && npm run write-env ",
+    "write-env": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./write-env.ps1 -functionName test-suite-execution-job-production-app",
+    "debug": "npm run build && nodemon --inspect=3016 ./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cito-data/signup-trigger.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/cito-data/signup-trigger/issues"
+  },
+  "homepage": "https://github.com/cito-data/signup-trigger#readme",
+  "devDependencies": {
+    "@tsconfig/node14": "^1.0.1",
+    "@types/jest": "^27.4.1",
+    "@types/dotenv": "^8.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-import": "^2.25.2",
+    "jest": "^27.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "2.5.1",
+    "serverless": "^3.22.0",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "axios": "^0.26.0",
+    "dotenv": "^16.0.0"
+  }
+}
