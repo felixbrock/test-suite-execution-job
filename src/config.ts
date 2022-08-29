@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const nodeEnv = process.env.NODE_ENV || 'development';
-const defaultPort = 3036;
+const defaultPort = 7213;
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : defaultPort;
 const apiRoot = process.env.API_ROOT || 'api';
 

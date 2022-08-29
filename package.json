@@ -12,7 +12,7 @@
     "start": "npm run build && nodemon ./src/index.ts",
     "deploy": "npm run build && serverless deploy && npm run write-env ",
     "write-env": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./write-env.ps1 -functionName test-suite-execution-job-production-app",
-    "debug": "npm run build && nodemon --inspect=3016 ./src/index.ts"
+    "debug": "npm run build && nodemon --inspect=3037 ./src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -26,8 +26,9 @@
   "homepage": "https://github.com/cito-data/test-suite-execution-job#readme",
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
-    "@types/jest": "^27.4.1",
     "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.2.0",
@@ -45,6 +46,7 @@
   },
   "dependencies": {
     "axios": "^0.26.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "express": "^4.18.1"
   }
 }

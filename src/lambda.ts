@@ -54,6 +54,9 @@ export const handler = async (
 
     const { frequency } = event;
 
+    console.log(`Triggering test suite jobs with frequency ${frequency}h`);
+    
+
     const jwt = await getJwt();
       
     const config: AxiosRequestConfig = {
@@ -61,17 +64,19 @@ export const handler = async (
     };
 
     const triggerTestExecutionResponse = await axios.post(
-      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/execute`,
-      // `http://localhost:8081/api/v1/organization`,
+      // `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/execute`,
+      `http://localhost:3012/api/v1/test-suite/execute`,
       {frequency},
       config
     );
 
-    if (triggerTestExecutionResponse.status !== 201) console.error(`Failed ot execute tests (frequency ${frequency})`);    
+    if (triggerTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute tests (frequency ${frequency})`);    
        
     callback(null, event);
   } catch (error: any) {
-    console.error(error.response.data.message);
+    if(typeof error === 'string') console.error(error);
+    else if (error instanceof Error) console.error(error.message);
+    console.error('Uknown error occurred');
   }
 };
 
