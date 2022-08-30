@@ -64,8 +64,8 @@ export const handler = async (
     };
 
     const triggerTestExecutionResponse = await axios.post(
-      // `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/execute`,
-      `http://localhost:3012/api/v1/test-suite/execute`,
+      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/execute`,
+      // `http://localhost:3012/api/v1/test-suite/execute`,
       {frequency},
       config
     );
