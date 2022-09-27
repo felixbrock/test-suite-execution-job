@@ -92,9 +92,9 @@ export const handler = async (
        
     callback(null, event);
   } catch (error: any) {
-    if(typeof error === 'string') console.error(error);
-    else if (error instanceof Error) console.error(error.message);
-    console.error('Uknown error occurred');
+    if(typeof error === 'string') console.trace(error);
+    else if (error instanceof Error) console.trace(error.message);
+    console.trace('Uknown error occurred');
   }
 };
 
