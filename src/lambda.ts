@@ -72,15 +72,6 @@ export const handler = async (
 
     if (triggerTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute tests (frequency ${frequency})`);
     
-    const triggerCustomTestExecutionResponse = await axios.post(
-      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suites/execute`,
-      // `http://localhost:3012/api/v1/test-suite/execute`,
-      {frequency},
-      config
-    );
-
-    if (triggerCustomTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute custom tests (frequency ${frequency})`);
-    
     const triggerNominalTestExecutionResponse = await axios.post(
       `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suites/execute`,
       // `http://localhost:3012/api/v1/test-suite/execute`,
@@ -89,6 +80,16 @@ export const handler = async (
     );
 
     if (triggerNominalTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute nominal tests (frequency ${frequency})`);  
+
+
+    const triggerCustomTestExecutionResponse = await axios.post(
+      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suites/execute`,
+      // `http://localhost:3012/api/v1/test-suite/execute`,
+      {frequency},
+      config
+    );
+
+    if (triggerCustomTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute custom tests (frequency ${frequency})`);
        
     callback(null, event);
   } catch (error: any) {
