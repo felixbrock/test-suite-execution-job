@@ -9,10 +9,11 @@
     "tsc": "tsc",
     "clean": "rimraf dist",
     "build": "npm run clean && npm run tsc && npm run lint",
-    "start": "npm run build && nodemon ./src/index.ts",
+    "start": "npm run build &&export NODE_ENV=production&& nodemon ./src/index.ts",
+    "dev": "npm run build &&export NODE_ENV=development&&  nodemon ./src/index.ts",
     "deploy": "npm run build && serverless deploy && npm run write-env ",
-    "write-env": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./write-env.ps1 -functionName test-suite-execution-job-production-app",
-    "debug": "npm run build && nodemon --inspect=3037 ./src/index.ts"
+    "write-env": "./write-env \"test-suite-execution-job-production-app\"",
+    "debug": "npm run build &&export NODE_ENV=development&& nodemon --inspect=3037 ./src/index.ts"
   },
   "repository": {
     "type": "git",

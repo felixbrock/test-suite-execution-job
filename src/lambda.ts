@@ -11,6 +11,21 @@ export interface OrganizationDto {
   name: string;
 }
 
+export const testSuiteTypes = ['test', 'custom-test', 'nominal-test'] as const;
+export type TestSuiteType = typeof testSuiteTypes[number];
+
+export const parseTestSuiteType = (testSuiteType: string): TestSuiteType => {
+  const identifiedElement = testSuiteTypes.find(
+    (element) => element.toLowerCase() === testSuiteType.toLowerCase()
+  );
+  if (identifiedElement) return identifiedElement;
+  throw new Error('Provision of invalid type');
+};
+
+export interface TriggerResponse {
+  status: number;
+}
+
 const getJwt = async (): Promise<string> => {
   try {
     const config: AxiosRequestConfig = {
@@ -43,6 +58,27 @@ const getJwt = async (): Promise<string> => {
   }
 };
 
+const triggerTest = async (
+  requestPath: string,
+  testSuiteId: string
+): Promise<TriggerResponse> => {
+  console.log(`Triggering test suite jobs for testSuite ${testSuiteId}`);
+
+  const jwt = await getJwt();
+
+  const config: AxiosRequestConfig = {
+    headers: { Authorization: `Bearer ${jwt}` },
+  };
+
+  const triggerTestExecutionResponse = await axios.post(
+    requestPath,
+    { testSuiteId },
+    config
+  );
+
+  return { status: triggerTestExecutionResponse.status };
+};
+
 export const handler = async (
   event: any,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,53 +87,56 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
+    const { testSuiteId, testType } = event;
 
-    const { frequency } = event;
+    if(testSuiteId) throw new Error('Received request with missing params');
 
-    console.log(`Triggering test suite jobs with frequency ${frequency}h`);
-    
+    let response: TriggerResponse;
+    switch (parseTestSuiteType(testType)) {
+      case 'test': {
+        response = await triggerTest(
+          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suites/execute`,
+          testSuiteId
+        );
 
-    const jwt = await getJwt();
-      
-    const config: AxiosRequestConfig = {
-      headers: { Authorization: `Bearer ${jwt}` },
-    };
+        // response = await triggerTest(
+        //    `http://localhost:3012/api/v1/test-suite/execute`,
+        //   testSuiteId
+        // );
 
-    const triggerTestExecutionResponse = await axios.post(
-      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suites/execute`,
-      // `http://localhost:3012/api/v1/test-suite/execute`,
-      {frequency},
-      config
-    );
+        break;
+      }
+      case 'custom-test': {
+        response = await triggerTest(
+          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suites/execute`,
+          testSuiteId
+        );
 
-    if (triggerTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute tests (frequency ${frequency})`);
-    
-    const triggerNominalTestExecutionResponse = await axios.post(
-      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suites/execute`,
-      // `http://localhost:3012/api/v1/test-suite/execute`,
-      {frequency},
-      config
-    );
+        break;
+      }
 
-    if (triggerNominalTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute nominal tests (frequency ${frequency})`);  
+      case 'nominal-test': {
+        response = await triggerTest(
+          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suites/execute`,
+          testSuiteId
+        );
 
+        break;
+      }
 
-    const triggerCustomTestExecutionResponse = await axios.post(
-      `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suites/execute`,
-      // `http://localhost:3012/api/v1/test-suite/execute`,
-      {frequency},
-      config
-    );
+      default:
+        throw new Error('Unknown test type provided');
+    }
 
-    if (triggerCustomTestExecutionResponse.status !== 201) throw new Error(`Failed ot execute custom tests (frequency ${frequency})`);
-       
+    if (response.status !== 201)
+      throw new Error(
+        `Failed ot execute custom tests (testSuiteId ${testSuiteId})`
+      );
+
     callback(null, event);
   } catch (error: any) {
-    if(typeof error === 'string') console.trace(error);
+    if (typeof error === 'string') console.trace(error);
     else if (error instanceof Error) console.trace(error.message);
     console.trace('Uknown error occurred');
   }
 };
-
-
-
