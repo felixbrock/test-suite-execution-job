@@ -87,12 +87,13 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testType } = event;
+    const { testSuiteId, testSuiteType } = event;
 
-    if(testSuiteId) throw new Error('Received request with missing params');
+    if (!testSuiteId || !testSuiteType)
+      throw new Error('Received request with missing params');
 
     let response: TriggerResponse;
-    switch (parseTestSuiteType(testType)) {
+    switch (parseTestSuiteType(testSuiteType)) {
       case 'test': {
         response = await triggerTest(
           `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suites/execute`,
