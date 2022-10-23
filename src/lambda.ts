@@ -92,6 +92,10 @@ export const handler = async (
     if (!testSuiteId || !testSuiteType)
       throw new Error('Received request with missing params');
 
+    console.log(
+      `Triggering test execution for test suite ${testSuiteId} (test type: ${testSuiteType})...`
+    );
+
     let response: TriggerResponse;
     switch (parseTestSuiteType(testSuiteType)) {
       case 'test': {
