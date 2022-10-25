@@ -90,8 +90,8 @@ export const handler = async (
     switch (parseTestSuiteType(testSuiteType)) {
       case 'test': {
         response = await triggerTest(
-          // `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${testSuiteId}/execute`
-          `http://localhost:3012/api/v1/test-suite/${testSuiteId}/execute`,
+          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${testSuiteId}/execute`,
+          // `http://localhost:3012/api/v1/test-suite/${testSuiteId}/execute`,
           targetOrganizationId
         );
 
