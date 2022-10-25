@@ -9,7 +9,9 @@ app.get('/', (req, res) => {
 
   handler(
     {
-      frequency: 1
+      testSuiteId: '635293b47bdcf8b89f835748',
+      testSuiteType: 'test',
+      targetOrganizationId: 'someCustId'
     },
     undefined,
     () => {}

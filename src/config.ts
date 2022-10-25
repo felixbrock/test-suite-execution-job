@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
 
-dotenv.config();
+import path from 'path';
 
-const nodeEnv = process.env.NODE_ENV || 'development';
-const defaultPort = 7213;
-const port = process.env.PORT ? parseInt(process.env.PORT, 10) : defaultPort;
-const apiRoot = process.env.API_ROOT || 'api';
+const dotenvConfig =
+  process.env.NODE_ENV === 'development'
+    ? { path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`) }
+    : {};
+dotenv.config(dotenvConfig);
 
 export interface AuthSchedulerEnvConfig {
   clientSecret: string;
@@ -14,44 +15,21 @@ export interface AuthSchedulerEnvConfig {
 }
 
 const getAuthSchedulerEnvConfig = (): AuthSchedulerEnvConfig => {
-  switch (nodeEnv) {
-    case 'development': {
-      const clientSecret = process.env.SYSTEM_INTERNAL_AUTH_CLIENT_SECRET_DEV || '';
-      if (!clientSecret) throw new Error('auth client secret missing');
+  const clientSecret = process.env.SYSTEM_INTERNAL_AUTH_CLIENT_SECRET;
+  const clientId = process.env.SYSTEM_INTERNAL_AUTH_CLIENT_ID;
+  const tokenUrl = process.env.SYSTEM_INTERNAL_AUTH_TOKEN_URL;
 
-      const clientId = '3o029nji154v0bm109hkvkoi5h';
-      const tokenUrl =
-        'https://auth-cito-dev.auth.eu-central-1.amazoncognito.com/oauth2/token';
-      return { clientSecret, clientId, tokenUrl };
-    }
-    case 'test': {
-      const clientSecret =
-        process.env.AUTH_SCHEDULER_CLIENT_SECRET_STAGING || '';
-      if (!clientSecret) throw new Error('auth client secret missing');
+  if (!clientSecret || !clientId || !tokenUrl)
+    throw new Error('missing auth scheduler env values');
 
-      const clientId = '';
-      const tokenUrl = '';
-      return { clientSecret, clientId, tokenUrl };
-    }
-    case 'production': {
-      const clientSecret = process.env.SYSTEM_INTERNAL_AUTH_CLIENT_SECRET_PROD || '';
-      if (!clientSecret) throw new Error('auth client secret missing');
-
-      const clientId = '54n1ig9sb07d4d9tiihdi0kifq';
-      const tokenUrl = 'https://auth.citodata.com/oauth2/token';
-      return { clientSecret, clientId, tokenUrl };
-    }
-    default:
-      throw new Error('node env misconfiguration');
-  }
+  return { clientSecret, clientId, tokenUrl };
 };
-
 
 export const appConfig = {
   express: {
-    port,
-    mode: nodeEnv,
-    apiRoot,
+    mode: process.env.NODE_ENV || 'development',
+    port: process.env.PORT ? parseInt(process.env.PORT, 10) : 7213,
+    apiRoot: process.env.API_ROOT || 'api',
   },
   cloud: {
     authSchedulerEnvConfig: getAuthSchedulerEnvConfig(),

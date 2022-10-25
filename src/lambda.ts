@@ -52,14 +52,21 @@ const getJwt = async (): Promise<string> => {
   }
 };
 
-const triggerTest = async (requestPath: string): Promise<TriggerResponse> => {
+const triggerTest = async (
+  requestPath: string,
+  targetOrganizationId: string
+): Promise<TriggerResponse> => {
   const jwt = await getJwt();
 
   const config: AxiosRequestConfig = {
     headers: { Authorization: `Bearer ${jwt}` },
   };
 
-  const triggerTestExecutionResponse = await axios.post(requestPath, config);
+  const triggerTestExecutionResponse = await axios.post(
+    requestPath,
+    { targetOrganizationId },
+    config
+  );
 
   return { status: triggerTestExecutionResponse.status };
 };
@@ -72,9 +79,9 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testSuiteType } = event;
+    const { testSuiteId, testSuiteType, targetOrganizationId } = event;
 
-    if (!testSuiteId || !testSuiteType)
+    if (!testSuiteId || !testSuiteType || !targetOrganizationId)
       throw new Error('Received request with missing params');
 
     console.log(`Triggering execution of test suite ${testSuiteId}`);
@@ -83,19 +90,17 @@ export const handler = async (
     switch (parseTestSuiteType(testSuiteType)) {
       case 'test': {
         response = await triggerTest(
-          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${testSuiteId}/execute`
+          // `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${testSuiteId}/execute`
+          `http://localhost:3012/api/v1/test-suite/${testSuiteId}/execute`,
+          targetOrganizationId
         );
-
-        // response = await triggerTest(
-        //    `http://localhost:3012/api/v1/test-suite/execute`,
-        //   testSuiteId
-        // );
 
         break;
       }
       case 'custom-test': {
         response = await triggerTest(
-          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suite/${testSuiteId}/execute`
+          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suite/${testSuiteId}/execute`,
+          targetOrganizationId
         );
 
         break;
@@ -103,7 +108,8 @@ export const handler = async (
 
       case 'nominal-test': {
         response = await triggerTest(
-          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suite/${testSuiteId}/execute`
+          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suite/${testSuiteId}/execute`,
+          targetOrganizationId
         );
 
         break;
