@@ -9,9 +9,10 @@ app.get('/', (req, res) => {
 
   handler(
     {
-      testSuiteId: '635293b47bdcf8b89f835748',
+      testSuiteId: '63639e7890836756b8ecd95a',
       testSuiteType: 'test',
-      targetOrganizationId: 'someCustId'
+      targetOrganizationId: 'someCustId',
+      executionType: 'automatic'
     },
     undefined,
     () => {}

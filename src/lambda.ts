@@ -5,6 +5,17 @@ export interface OrganizationDto {
   name: string;
 }
 
+export const executionTypes = ['individual', 'automatic', 'frequency'] as const;
+export type ExecutionType = typeof executionTypes[number];
+
+export const parseExecutionType = (executionType: unknown): ExecutionType => {
+  const identifiedElement = executionTypes.find(
+    (element) => element === executionType
+  );
+  if (identifiedElement) return identifiedElement;
+  throw new Error('Provision of invalid type');
+};
+
 export const testSuiteTypes = ['test', 'custom-test', 'nominal-test'] as const;
 export type TestSuiteType = typeof testSuiteTypes[number];
 
@@ -54,7 +65,8 @@ const getJwt = async (): Promise<string> => {
 
 const triggerTest = async (
   requestPath: string,
-  targetOrganizationId: string
+  targetOrganizationId: string,
+  executionType: ExecutionType
 ): Promise<TriggerResponse> => {
   const jwt = await getJwt();
 
@@ -64,64 +76,84 @@ const triggerTest = async (
 
   const triggerTestExecutionResponse = await axios.post(
     requestPath,
-    { targetOrganizationId },
+    { targetOrganizationId, executionType },
     config
   );
 
   return { status: triggerTestExecutionResponse.status };
 };
 
+const triggerExecution = async (props: {
+  testSuiteId: string;
+  testSuiteType: TestSuiteType;
+  targetOrganizationId: string;
+  executionType: ExecutionType;
+}): Promise<void> => {
+  console.log(`Triggering execution of test suite ${props.testSuiteId}`);
+
+  let response: TriggerResponse;
+  switch (parseTestSuiteType(props.testSuiteType)) {
+    case 'test': {
+      response = await triggerTest(
+        // `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${props.testSuiteId}/execute`,
+        `http://localhost:3012/api/v1/test-suite/${props.testSuiteId}/execute`,
+        props.targetOrganizationId,
+        props.executionType
+      );
+
+      break;
+    }
+    case 'custom-test': {
+      response = await triggerTest(
+        `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suite/${props.testSuiteId}/execute`,
+        props.targetOrganizationId,
+        props.executionType
+      );
+
+      break;
+    }
+
+    case 'nominal-test': {
+      response = await triggerTest(
+        `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
+        // `http://localhost:3012/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
+        props.targetOrganizationId,
+        props.executionType
+      );
+
+      break;
+    }
+
+    default:
+      throw new Error('Unknown test type provided');
+  }
+
+  if (response.status !== 201)
+    throw new Error(
+      `Failed ot execute custom tests (testSuiteId ${props.testSuiteId})`
+    );
+};
+
 export const handler = async (
   event: any,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   context: any,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testSuiteType, targetOrganizationId } = event;
+    const { testSuiteId, testSuiteType, targetOrganizationId, executionType } =
+      event;
 
-    if (!testSuiteId || !testSuiteType || !targetOrganizationId)
-      throw new Error('Received request with missing params');
-
-    console.log(`Triggering execution of test suite ${testSuiteId}`);
-
-    let response: TriggerResponse;
-    switch (parseTestSuiteType(testSuiteType)) {
-      case 'test': {
-        response = await triggerTest(
-          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${testSuiteId}/execute`,
-          // `http://localhost:3012/api/v1/test-suite/${testSuiteId}/execute`,
-          targetOrganizationId
-        );
-
-        break;
-      }
-      case 'custom-test': {
-        response = await triggerTest(
-          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suite/${testSuiteId}/execute`,
-          targetOrganizationId
-        );
-
-        break;
-      }
-
-      case 'nominal-test': {
-        response = await triggerTest(
-          `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suite/${testSuiteId}/execute`,
-          targetOrganizationId
-        );
-
-        break;
-      }
-
-      default:
-        throw new Error('Unknown test type provided');
-    }
-
-    if (response.status !== 201)
+    if (testSuiteId && testSuiteType && targetOrganizationId && executionType)
+      await triggerExecution({
+        testSuiteId,
+        testSuiteType: parseTestSuiteType(testSuiteType),
+        targetOrganizationId,
+        executionType: parseExecutionType(executionType),
+      });
+    else
       throw new Error(
-        `Failed ot execute custom tests (testSuiteId ${testSuiteId})`
+        'Props misalignment - No matching use case found that matches combination of provided props'
       );
 
     callback(null, event);
