@@ -65,7 +65,7 @@ const getJwt = async (): Promise<string> => {
 
 const triggerTest = async (
   requestPath: string,
-  targetOrganizationId: string,
+  targetOrgId: string,
   executionType: ExecutionType
 ): Promise<TriggerResponse> => {
   const jwt = await getJwt();
@@ -76,7 +76,7 @@ const triggerTest = async (
 
   const triggerTestExecutionResponse = await axios.post(
     requestPath,
-    { targetOrganizationId, executionType },
+    { targetOrgId, executionType },
     config
   );
 
@@ -86,7 +86,7 @@ const triggerTest = async (
 const triggerExecution = async (props: {
   testSuiteId: string;
   testSuiteType: TestSuiteType;
-  targetOrganizationId: string;
+  targetOrgId: string;
   executionType: ExecutionType;
 }): Promise<void> => {
   console.log(`Triggering execution of test suite ${props.testSuiteId}`);
@@ -95,9 +95,9 @@ const triggerExecution = async (props: {
   switch (parseTestSuiteType(props.testSuiteType)) {
     case 'test': {
       response = await triggerTest(
-        // `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${props.testSuiteId}/execute`,
-        `http://localhost:3012/api/v1/test-suite/${props.testSuiteId}/execute`,
-        props.targetOrganizationId,
+        `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${props.testSuiteId}/execute`,
+        // `http://localhost:3012/api/v1/test-suite/${props.testSuiteId}/execute`,
+        props.targetOrgId,
         props.executionType
       );
 
@@ -106,7 +106,7 @@ const triggerExecution = async (props: {
     case 'custom-test': {
       response = await triggerTest(
         `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suite/${props.testSuiteId}/execute`,
-        props.targetOrganizationId,
+        props.targetOrgId,
         props.executionType
       );
 
@@ -117,7 +117,7 @@ const triggerExecution = async (props: {
       response = await triggerTest(
         `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
         // `http://localhost:3012/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
-        props.targetOrganizationId,
+        props.targetOrgId,
         props.executionType
       );
 
@@ -141,14 +141,14 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testSuiteType, targetOrganizationId, executionType } =
+    const { testSuiteId, testSuiteType, targetOrgId, executionType } =
       event;
 
-    if (testSuiteId && testSuiteType && targetOrganizationId && executionType)
+    if (testSuiteId && testSuiteType && targetOrgId && executionType)
       await triggerExecution({
         testSuiteId,
         testSuiteType: parseTestSuiteType(testSuiteType),
-        targetOrganizationId,
+        targetOrgId,
         executionType: parseExecutionType(executionType),
       });
     else

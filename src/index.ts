@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
     {
       testSuiteId: '63639e7890836756b8ecd95a',
       testSuiteType: 'test',
-      targetOrganizationId: 'someCustId',
+      targetOrgId: 'someCustId',
       executionType: 'automatic'
     },
     undefined,
