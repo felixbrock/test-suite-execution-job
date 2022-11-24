@@ -157,9 +157,9 @@ export const handler = async (
       );
 
     callback(null, event);
-  } catch (error: any) {
-    if (typeof error === 'string') console.trace(error);
-    else if (error instanceof Error) console.trace(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) console.error(error.stack);
+    else if (error) console.trace(error);
     console.trace('Uknown error occurred');
   }
 };
