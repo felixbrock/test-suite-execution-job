@@ -14,18 +14,7 @@ provider:
       statements:
         - Effect: Allow
           Action: 
-            - "schedule:ListSchedules"
-            - "schedule:GetSchedule"
-            - "schedule:CreateSchedule"
-            - "schedule:UpdateSchedule"
-            - "schedule:DeleteSchedule"
-            - "scheduler:ListScheduleGroups"
-            - "scheduler:GetScheduleGroup"
-            - "scheduler:CreateScheduleGroup"
-            - "scheduler:DeleteScheduleGroup"
-            - "scheduler:ListTagsForResource"
-            - "scheduler:TagResource"
-            - "scheduler:UntagResource"
+            - "lambda:InvokeFunction"
           Resource: '*'
 functions:
   app:
