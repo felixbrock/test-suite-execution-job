@@ -160,6 +160,6 @@ export const handler = async (
   } catch (error: unknown) {
     if (error instanceof Error) console.error(error.stack);
     else if (error) console.trace(error);
-    console.trace('Uknown error occurred');
+    else console.trace('Uknown error occurred');
   }
 };
