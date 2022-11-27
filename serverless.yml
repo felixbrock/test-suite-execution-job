@@ -9,13 +9,6 @@ provider:
   timeout: 120
   memorySize: 128
   architecture: arm64
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action: 
-            - "lambda:InvokeFunction"
-          Resource: '*'
 functions:
   app:
     handler: dist/lambda.handler
