@@ -92,10 +92,11 @@ const triggerExecution = async (props: {
   console.log(`Triggering execution of test suite ${props.testSuiteId}`);
 
   let response: TriggerResponse;
+  const baseUrl = 'https://k45v4v7jrgn5tjcyb4xwpc56de0wjpbr.lambda-url.eu-central-1.on.aws';
   switch (parseTestSuiteType(props.testSuiteType)) {
     case 'test': {
       response = await triggerTest(
-        `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/test-suite/${props.testSuiteId}/execute`,
+        `${baseUrl}/api/v1/test-suite/${props.testSuiteId}/execute`,
         // `http://localhost:3012/api/v1/test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
@@ -105,7 +106,7 @@ const triggerExecution = async (props: {
     }
     case 'custom-test': {
       response = await triggerTest(
-        `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/custom-test-suite/${props.testSuiteId}/execute`,
+        `${baseUrl}/api/v1/custom-test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
       );
@@ -115,7 +116,7 @@ const triggerExecution = async (props: {
 
     case 'nominal-test': {
       response = await triggerTest(
-        `https://ax4h0t5r59.execute-api.eu-central-1.amazonaws.com/production/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
+        `${baseUrl}/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
         // `http://localhost:3012/api/v1/nominal-test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
