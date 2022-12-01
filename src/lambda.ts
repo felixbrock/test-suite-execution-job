@@ -92,7 +92,8 @@ const triggerExecution = async (props: {
   console.log(`Triggering execution of test suite ${props.testSuiteId}`);
 
   let response: TriggerResponse;
-  const baseUrl = 'https://k45v4v7jrgn5tjcyb4xwpc56de0wjpbr.lambda-url.eu-central-1.on.aws';
+  const baseUrl =
+    'https://k45v4v7jrgn5tjcyb4xwpc56de0wjpbr.lambda-url.eu-central-1.on.aws';
   switch (parseTestSuiteType(props.testSuiteType)) {
     case 'test': {
       response = await triggerTest(
@@ -142,8 +143,7 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testSuiteType, targetOrgId, executionType } =
-      event;
+    const { testSuiteId, testSuiteType, targetOrgId, executionType } = JSON.parse(event.Records[0].body);
 
     if (testSuiteId && testSuiteType && targetOrgId && executionType)
       await triggerExecution({
@@ -154,7 +154,7 @@ export const handler = async (
       });
     else
       throw new Error(
-        'Props misalignment - No matching use case found that matches combination of provided props'
+        `Props misalignment - No matching use case found that matches combination of provided props\nReceived Event: testSuiteId: ${testSuiteId} targetOrgId: ${targetOrgId}`
       );
 
     callback(null, event);

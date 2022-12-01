@@ -9,6 +9,15 @@ provider:
   timeout: 120
   memorySize: 128
   architecture: arm64
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 
+            - "sqs:ReceiveMessage"
+            - "sqs:DeleteMessage"
+            - "sqs:GetQueueAttributes"
+          Resource: '*'
 functions:
   app:
     handler: dist/lambda.handler
