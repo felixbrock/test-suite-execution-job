@@ -5,7 +5,7 @@ export interface OrganizationDto {
   name: string;
 }
 
-export const executionTypes = ['individual', 'automatic', 'frequency'] as const;
+export const executionTypes = ['automatic', 'frequency'] as const;
 export type ExecutionType = typeof executionTypes[number];
 
 export const parseExecutionType = (executionType: unknown): ExecutionType => {
