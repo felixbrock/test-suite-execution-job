@@ -117,8 +117,8 @@ const triggerExecution = async (props: {
 
     case 'nominal-test': {
       response = await triggerTest(
-        `${baseUrl}/api/v1/qualitative-test-suite/${props.testSuiteId}/execute`,
-        // `http://localhost:3012/api/v1/qualitative-test-suite/${props.testSuiteId}/execute`,
+        `${baseUrl}/api/v1/qual-test-suite/${props.testSuiteId}/execute`,
+        // `http://localhost:3012/api/v1/qual-test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
       );
