@@ -93,7 +93,7 @@ const triggerExecution = async (props: {
 
   let response: TriggerResponse;
   const baseUrl =
-    'https://k45v4v7jrgn5tjcyb4xwpc56de0wjpbr.lambda-url.eu-central-1.on.aws';
+    'https://5fj5bbhcgczduwgi6s3ps2e4im0fgzau.lambda-url.eu-central-1.on.aws';
   switch (parseTestSuiteType(props.testSuiteType)) {
     case 'test': {
       response = await triggerTest(
@@ -143,7 +143,8 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testSuiteType, targetOrgId, executionType } = JSON.parse(event.Records[0].body);
+    const { testSuiteId, testSuiteType, targetOrgId, executionType } =
+      JSON.parse(event.Records[0].body);
 
     if (testSuiteId && testSuiteType && targetOrgId && executionType)
       await triggerExecution({
