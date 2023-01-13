@@ -136,27 +136,65 @@ const triggerExecution = async (props: {
     );
 };
 
+const handle = async (recordBody: {
+  testSuiteId: string;
+  testSuiteType: string;
+  targetOrgId: string;
+  executionType: string;
+}): Promise<void> => {
+  const { executionType, targetOrgId, testSuiteId, testSuiteType } = recordBody;
+
+  if (testSuiteId && testSuiteType && targetOrgId && executionType)
+    await triggerExecution({
+      testSuiteId,
+      testSuiteType: parseTestSuiteType(testSuiteType),
+      targetOrgId,
+      executionType: parseExecutionType(executionType),
+    });
+  else
+    throw new Error(
+      `Props misalignment - No matching use case found that matches combination of provided props\nReceived Event: testSuiteId: ${testSuiteId} targetOrgId: ${targetOrgId}`
+    );
+};
+
 export const handler = async (
-  event: any,
+  event: {
+    Records: { body: string }[];
+  },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   context: any,
   callback: any
 ): Promise<void> => {
   try {
-    const { testSuiteId, testSuiteType, targetOrgId, executionType } =
-      JSON.parse(event.Records[0].body);
+    console.log(event);
+    const batchSize = event.Records.length;
 
-    if (testSuiteId && testSuiteType && targetOrgId && executionType)
-      await triggerExecution({
-        testSuiteId,
-        testSuiteType: parseTestSuiteType(testSuiteType),
-        targetOrgId,
-        executionType: parseExecutionType(executionType),
-      });
-    else
-      throw new Error(
-        `Props misalignment - No matching use case found that matches combination of provided props\nReceived Event: testSuiteId: ${testSuiteId} targetOrgId: ${targetOrgId}`
-      );
+    console.log(`Executing batch of ${batchSize}`);
+
+    await Promise.all(
+      event.Records.map(async (el) => {
+        const isBody = (
+          obj: unknown
+        ): obj is {
+          testSuiteId: string;
+          testSuiteType: string;
+          targetOrgId: string;
+          executionType: string;
+        } =>
+          !!obj &&
+          typeof obj === 'object' &&
+          'testSuiteId' in obj &&
+          'testSuiteType' in obj &&
+          'targetOrgId' in obj &&
+          'executionType' in obj;
+        const body: unknown = JSON.parse(el.body);
+
+        if (!isBody(body))
+          throw new Error('Provided record does not hold expected body format');
+
+        await handle(body);
+      })
+    );
 
     callback(null, event);
   } catch (error: unknown) {
