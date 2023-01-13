@@ -166,7 +166,6 @@ export const handler = async (
   callback: any
 ): Promise<void> => {
   try {
-    console.log(event);
     const batchSize = event.Records.length;
 
     console.log(`Executing batch of ${batchSize}`);
