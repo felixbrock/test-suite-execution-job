@@ -89,7 +89,9 @@ const triggerExecution = async (props: {
   targetOrgId: string;
   executionType: ExecutionType;
 }): Promise<void> => {
-  console.log(`Triggering execution of test suite ${props.testSuiteId}`);
+  console.log(
+    `Triggering execution of test suite ${props.testSuiteId} with org id ${props.targetOrgId}`
+  );
 
   let response: TriggerResponse;
   const baseUrl =
