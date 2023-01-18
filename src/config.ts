@@ -25,6 +25,19 @@ const getAuthSchedulerEnvConfig = (): AuthSchedulerEnvConfig => {
   return { clientSecret, clientId, tokenUrl };
 };
 
+interface BaseUrl {
+  observability: string;
+}
+
+const getBaseUrl = (): BaseUrl => {
+  const obsBaseUrl = process.env.BASE_URL_OBSERVABILITY;
+
+  if (!obsBaseUrl)
+    throw new Error('Base url for observability service missing');
+
+  return { observability: obsBaseUrl };
+};
+
 export const appConfig = {
   express: {
     mode: process.env.NODE_ENV || 'development',
@@ -35,4 +48,5 @@ export const appConfig = {
     authSchedulerEnvConfig: getAuthSchedulerEnvConfig(),
     region: 'eu-central-1',
   },
+  baseurl: getBaseUrl(),
 };

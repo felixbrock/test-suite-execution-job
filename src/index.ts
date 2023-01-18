@@ -12,10 +12,9 @@ app.get('/', (req, res) => {
       Records: [
         {
           body: JSON.stringify({
-            testSuiteId: 'f0f0d0d3-5cb0-4ab6-a9c1-0cb7ef7d92a3',
-            testSuiteType: 'test',
+            testSuiteId: '4987287a-00ef-41f8-b882-12514379a81f',
             targetOrgId: '631789bf27518f97cf1c82b7',
-            // targetOrgId: 'someCustId',
+            testSuiteType: 'test',
             executionType: 'frequency',
           }),
         },

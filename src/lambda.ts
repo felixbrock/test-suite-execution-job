@@ -94,13 +94,11 @@ const triggerExecution = async (props: {
   );
 
   let response: TriggerResponse;
-  const baseUrl =
-    'https://5fj5bbhcgczduwgi6s3ps2e4im0fgzau.lambda-url.eu-central-1.on.aws';
+
   switch (parseTestSuiteType(props.testSuiteType)) {
     case 'test': {
       response = await triggerTest(
-        `${baseUrl}/api/v1/test-suite/${props.testSuiteId}/execute`,
-        // `http://localhost:3012/api/v1/test-suite/${props.testSuiteId}/execute`,
+        `${appConfig.baseurl.observability}/api/v1/test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
       );
@@ -109,7 +107,7 @@ const triggerExecution = async (props: {
     }
     case 'custom-test': {
       response = await triggerTest(
-        `${baseUrl}/api/v1/custom-test-suite/${props.testSuiteId}/execute`,
+        `${appConfig.baseurl.observability}/api/v1/custom-test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
       );
@@ -119,8 +117,7 @@ const triggerExecution = async (props: {
 
     case 'nominal-test': {
       response = await triggerTest(
-        `${baseUrl}/api/v1/qual-test-suite/${props.testSuiteId}/execute`,
-        // `http://localhost:3012/api/v1/qual-test-suite/${props.testSuiteId}/execute`,
+        `${appConfig.baseurl.observability}/api/v1/qual-test-suite/${props.testSuiteId}/execute`,
         props.targetOrgId,
         props.executionType
       );
