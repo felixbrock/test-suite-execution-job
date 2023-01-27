@@ -190,13 +190,13 @@ export const handler = async (
         if (!isBody(body))
           throw new Error('Provided record does not hold expected body format');
 
-        /* To block Nicos tests for now */
+        /* Block  tests executed for a specific org */
 
-        // if (body.targetOrgId === '6374e43d0aee515b64effd87') {
-        //   console.log('skipping def organization tests');
+        if (body.targetOrgId === '6372d0a453a0669ff7ced7d9') {
+          console.log('skipping ph. organization tests');
 
-        //   return;
-        // }
+          return;
+        }
 
         await handle(body);
       })
