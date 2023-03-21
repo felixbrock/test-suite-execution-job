@@ -193,10 +193,10 @@ export const handler = async (
         /* Block  tests executed for a specific org */
 
         if (
-          body.targetOrgId === '6372d0a453a0669ff7ced7d9'
-          // ||          body.targetOrgId === '6374e43d0aee515b64effd87'
+          body.targetOrgId === '6372d0a453a0669ff7ced7d9' ||
+          body.targetOrgId === '6374e43d0aee515b64effd87'
         ) {
-          console.log('skipping ph. organization tests');
+          console.log(`Skipping execution of test ${body.testSuiteId}`);
 
           return;
         }
